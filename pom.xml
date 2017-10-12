@@ -2,8 +2,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hydsoft</groupId>
+	<packaging>jar</packaging>
 	<artifactId>log4jexample</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+	<properties>
+		<deploy.directory>/usr/local/demo</deploy.directory>
+		<!--<deploy.directory>/YOUR/LOCAL/PATH</deploy.directory>-->
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -11,7 +18,50 @@
 			<version>1.2.17</version>
 		</dependency>
 	</dependencies>
-<build>
-    <defaultGoal>compile</defaultGoal>
-</build>	
+
+	<build>
+		<defaultGoal>compile</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<!--<outputDirectory>${project.build.directory}/classes/lib</outputDirectory>-->
+							<outputDirectory>${deploy.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix> <!-- load the lib folder for the dependencies -->
+							<!--<mainClass>com.hydsoft.HelloExample</mainClass>-->
+						</manifest>
+						<manifestEntries>
+							<Class-Path>lib/</Class-Path>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
 </project>
